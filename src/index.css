@@ -1,0 +1,29 @@
+body, html {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 1.2em;
+}
+
+.app-primary-color {
+  color: #61ca6a;
+}
+
+nav, .app-primary-bg-color {
+  background-color: #3eb948;
+}
+
+.card-body {
+  padding: 0!important;
+}
+
+.border-bottom-1 {
+  border-bottom: 1px solid lightblue;
+}
+
+.card-subtitle {
+  margin-top: 1rem;
+}
+
+.navbar-nav .nav-link, .navbar-toggler {
+  color: white;
+  border-color: white;
+}
