@@ -1,17 +1,37 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CurrencyUtils from "../../utils/CurrencyUtils";
 import DateUtils from "../../utils/DateUtils";
 import useExpenseByExpenseId from "../../hooks/useExpenseByExpenseId";
+import ConfirmDialog from "../../components/ConfirmDialog";
+import { useState } from "react";
+import { deleteExpenseByExpenseId } from "../../services/expense-service";
 
 const ExpenseDetails = () => {
   const { expenseId } = useParams<{ expenseId: string }>();
-  const { expense, errors, isLoading } = useExpenseByExpenseId(expenseId!);
+  const { expense, errors, setErrors, isLoading, setLoading } = useExpenseByExpenseId(expenseId!);
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const handleClose = () => {
+    setShowDialog(false);
+  }
+
+  const handleConfirm = () => {
+    setLoading(true);
+    deleteExpenseByExpenseId(expenseId!)
+      .catch((error) => setErrors(error.message))
+      .finally(() => {
+        setShowDialog(false);
+        setLoading(false);
+        navigate("/");
+      })
+  }
   return (
     <div className="container mt-2">
       {isLoading && <p>Loading...</p>}
       {errors && <p className="text-danger">{errors}</p>}
       <div className="d-flex flex-row-reverse mb-2">
-        <button className="btn btn-sm btn-danger">Delete</button>
+        <button className="btn btn-sm btn-danger" onClick={() => setShowDialog(true)}>Delete</button>
         <button className="btn btn-sm btn-warning mx-2">Edit</button>
         <button className="btn btn-sm btn-secondary">Back</button>
       </div>
@@ -43,6 +63,7 @@ const ExpenseDetails = () => {
           </table>
         </div>
       </div>
+      <ConfirmDialog title="Confirm" message="Want you to delete this?" show={showDialog} onConfirm={handleConfirm} onClose={handleClose}/>
     </div>
   )
 }
