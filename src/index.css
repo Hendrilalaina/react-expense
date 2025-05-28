@@ -8,7 +8,7 @@ body, html {
 }
 
 nav, .app-primary-bg-color {
-  background-color: #3eb948;
+  background-color: #3eb948 !important;
 }
 
 .card-body {

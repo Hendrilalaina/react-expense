@@ -53,7 +53,8 @@ const Register = () => {
           <input type="password" name="confirmPassword" id="retypePassword" className="form-control" placeholder="Confirm your password" value={formik.values.confirmPassword} onChange={formik.handleChange} onBlur={formik.handleBlur} />
           {formik.touched.confirmPassword && formik.errors.confirmPassword ? <div className="text-danger fst-italic">{formik.errors.confirmPassword}</div> : null}
         </div>
-        <button type="submit" className="btn btn-sm btn-outline-light btn-primary">Register</button>
+        {isLoading && (<button className="btn btn-sm app-primary-bg-color btn-outline-light" type="submit" disabled>Loading...</button>)}
+        {!isLoading && (<button type="submit" className="btn btn-sm app-primary-bg-color btn-outline-light">Register</button>)}
       </form>
     </div>
   </div>

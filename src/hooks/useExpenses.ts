@@ -14,7 +14,7 @@ const useExpenses = () => {
         setExpenses(response.data);
         setLoading(false);
       })
-      .catch((error) => setError(error.message))
+      .catch((error) => setError(error.response.data))
       .finally(() => setLoading(false));            
   },[]);
 
