@@ -14,7 +14,13 @@ export const useLogin = () => {
                 localStorage.setItem("user", JSON.stringify(response.data));
                 navigate("/");
             })
-            .catch((error) => setError(error.message))
+            .catch((error) => {
+                if (error.response && error.response.data && error.response.data.message) {
+                    setError(error.response.data.message);
+                } else {
+                    setError(error.message);
+                }
+            })
             .finally(() => setLoading(false));
     }
     return {error, isLoading, login};
