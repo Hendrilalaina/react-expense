@@ -1,4 +1,5 @@
 export interface AuthResponse {
     email: string,
-    token: string
+    token: string,
+    refreshToken: string
 }

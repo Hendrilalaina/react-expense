@@ -10,3 +10,14 @@ export const createProfile = (profile: Profile) => {
 export const authenticate = (authRequest: AuthRequest) => {
     return apiClient.post<AuthResponse>("/login", authRequest);
 }
+
+export const refresh = () => {
+    const authObject = localStorage.getItem("user");
+    if (authObject) {
+      const { refreshToken } = JSON.parse(authObject) as AuthResponse;
+    //   console.log(refreshToken);
+      return apiClient.post<AuthResponse>("/refresh-token", { refreshToken });
+    } else {
+      return null;
+    }
+}
