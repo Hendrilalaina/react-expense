@@ -4,7 +4,8 @@ import { Expense } from "../../model/Expense";
 import DashboardStatus from "./DashboardStatus";
 
 const Dashboard = () => {
-  const loggedUser: string = "mika@mika.mg";
+  const { email } = JSON.parse(localStorage.getItem("user") || "{}");
+  const loggedUser = email;
   const { expenses, error, isLoading } = useExpenses();
   const totalExpenses = expenses.reduce((acc: number, expense: Expense) => acc + expense.amount, 0) 
   

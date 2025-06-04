@@ -11,6 +11,10 @@ export const authenticate = (authRequest: AuthRequest) => {
     return apiClient.post<AuthResponse>("/login", authRequest);
 }
 
+export const signout = () => {
+  return apiClient.post<void>("/signout");
+}
+
 export const refresh = () => {
     const authObject = localStorage.getItem("user");
     if (authObject) {
