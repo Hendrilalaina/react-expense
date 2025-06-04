@@ -15,9 +15,8 @@ export const refresh = () => {
     const authObject = localStorage.getItem("user");
     if (authObject) {
       const { refreshToken } = JSON.parse(authObject) as AuthResponse;
-    //   console.log(refreshToken);
       return apiClient.post<AuthResponse>("/refresh-token", { refreshToken });
     } else {
-      return null;
+      throw new Error("No authentication found");
     }
 }

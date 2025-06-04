@@ -1,6 +1,5 @@
 import axios from "axios";
 import { AuthResponse } from "../model/AuthResponse";
-import { refresh } from "../services/auth-service";
 
 const apiClient = axios.create({
   baseURL: "http://localhost:8081/api/v1"
@@ -23,30 +22,47 @@ apiClient.interceptors.response.use(
   async error => {
     const originalRequest = error.config;
     
+    // If the error is 401 and we haven't already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       
       try {
+        // Get the refresh token from storage
         const authObject = localStorage.getItem("user");
         if (!authObject) {
+          window.location.href = "/login";
+          console.log("Not auth object")
           return Promise.reject(error);
         }
-        console.log("Calling Refresh token API");
-        const response = await refresh();
-        if (response) {
-          const newAuthData = {
-            ...JSON.parse(authObject),
-            token: response.data.token,
-            refreshToken: response.data.refreshToken
-          };
-          localStorage.setItem("user", JSON.stringify(newAuthData));
-          
-          apiClient.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-          originalRequest.headers['Authorization'] = `Bearer ${response.data.token}`;
-        }
         
+        const { refreshToken } = JSON.parse(authObject) as AuthResponse;
+        
+        // Call refresh token endpoint
+        console.log("Call /refresh-token");
+        const response = await axios.post(`${apiClient.defaults.baseURL}/refresh-token`, {
+          refreshToken
+        });
+        
+        // Update the stored tokens
+        const newAuthData = {
+          ...JSON.parse(authObject),
+          token: response.data.token,
+          refreshToken: response.data.refreshToken // if a new refresh token is returned
+        };
+        localStorage.setItem("user", JSON.stringify(newAuthData));
+        
+        // Update the Authorization header
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+        originalRequest.headers['Authorization'] = `Bearer ${response.data.token}`;
+        
+        // Retry the original request
         return apiClient(originalRequest);
       } catch (refreshError) {
+        // If refresh fails, clear storage and redirect to login
+        console.log("Refresh Error", refreshError);
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+        // You might want to redirect to login page here
         return Promise.reject(refreshError);
       }
     }
