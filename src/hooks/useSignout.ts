@@ -11,7 +11,7 @@ export const useSignout = () => {
         setLoading(true);
         signout()
             .then((response) => {
-                if (response && response.status == 201) {
+                if (response && response.status === 200) {
                     localStorage.clear();
                     updateAuth(false);
                 }
